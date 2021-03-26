@@ -1,5 +1,7 @@
 # Classic Snake game
 
+https://tatsiak.github.io/snake/
+
 ## Available Scripts
 
 In the project directory, you can run:
