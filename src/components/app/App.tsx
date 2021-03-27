@@ -6,15 +6,24 @@ const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max));
 };
 
+const storedBestResult = localStorage.getItem("best");
 export const App = () => {
+  const [tick, setTick] = useState(0);
+  const [bestScore, _setBestScore] = useState(Number(storedBestResult));
+
+  const setBestScore = (val: number) => {
+    localStorage.setItem("best", String(val));
+    _setBestScore(val);
+  };
   const [snakeCells, setSnakeCells] = useState<{ [key: string]: boolean }>({
     "0:0": true,
+    "0:1": true,
+    "0:2": true,
   });
   const [direction, setDirection] = useState<"up" | "right" | "down" | "left">(
     "right"
   );
-  const [snake, setSnake] = useState(["0:0", "0:1"]);
-  const [tick, setTick] = useState(0);
+  const [snake, setSnake] = useState(["0:0", "0:1", "0:2"]);
   const [foodCell, setFoodCell] = useState("5:5");
   const [gameOver, setGameOver] = useState(false);
   const rows = 10;
@@ -23,23 +32,23 @@ export const App = () => {
 
   useEffect(() => {
     setInterval(() => {
-      setTick((val) => val + 1);
-    }, 500);
+      setTick((cur) => cur + 1);
+    }, 200);
 
     document.onkeydown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
-        setDirection("right");
+        setDirection((cur) => (cur === "left" ? "left" : "right"));
       } else if (e.key === "ArrowLeft") {
-        setDirection("left");
+        setDirection((cur) => (cur === "right" ? "right" : "left"));
       } else if (e.key === "ArrowUp") {
-        setDirection("up");
+        setDirection((cur) => (cur === "down" ? "down" : "up"));
       } else if (e.key === "ArrowDown") {
-        setDirection("down");
+        setDirection((cur) => (cur === "up" ? "up" : "down"));
       }
     };
   }, []);
 
-  useEffect(() => {
+  const move = () => {
     if (gameOver) {
       return;
     }
@@ -81,7 +90,9 @@ export const App = () => {
     } else {
       setSnake([...snake.slice(1), nextHead]);
     }
-  }, [tick]);
+  };
+
+  useEffect(move, [tick]);
 
   useEffect(() => {
     const newSnakeCells: any = {};
@@ -89,6 +100,9 @@ export const App = () => {
       newSnakeCells[node] = true;
     });
     setSnakeCells(newSnakeCells);
+    if (snake.length > bestScore) {
+      setBestScore(snake.length);
+    }
   }, [snake]);
 
   for (let i = 0; i < rows; i++) {
@@ -105,7 +119,15 @@ export const App = () => {
       } else if (key === foodCell) {
         type = "food";
       }
-      row.push(<Cell type={type} key={key} />);
+      if (type === "food") {
+        row.push(
+          <Cell type={"empty"} key={key}>
+            <Cell type={"food"} key={key} />
+          </Cell>
+        );
+      } else {
+        row.push(<Cell type={type} key={key} />);
+      }
     }
     matrix.push(
       <div className="row" key={i}>
@@ -113,5 +135,11 @@ export const App = () => {
       </div>
     );
   }
-  return <div className="field">{matrix}</div>;
+  return (
+    <section className="page">
+      <span className="score">Current score: {snake.length}</span>
+      <span className="score">Best score: {bestScore}</span>
+      <div className="field">{matrix}</div>
+    </section>
+  );
 };

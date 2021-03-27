@@ -1,13 +1,16 @@
 .cell {
-  width: 10px;
-  height: 10px;
+  width: 30px;
+  height: 30px;
   border: 1px dashed lightcoral;
   background-color: black;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cell--snake {
-  background-color: greenyellow;
+  background-color: green;
+  border: 1px solid greenyellow;
 }
 
 .cell--dead-snake {
@@ -15,5 +18,9 @@
 }
 
 .cell--food {
-  background-color: magenta;
+  background-color: tomato;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
 }

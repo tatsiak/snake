@@ -1,7 +1,21 @@
-.field {
+.page {
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
+.field {
+  display: flex;
+  flex-direction: column;
+  border: 3px solid coral;
+  margin: auto;
+}
 .row {
   display: flex;
+}
+
+.score {
+  color: greenyellow;
+  font-weight: 40px;
 }
